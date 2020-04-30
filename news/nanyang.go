@@ -88,7 +88,7 @@ func CrawlNanYang() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 1; pageIndex <= 3; pageIndex++ {
+	for pageIndex := 1; pageIndex <= 1; pageIndex++ {
 		// Add URLs to the queue
 		q.AddURL("https://www.enanyang.my/category/%E8%B4%A2%E7%BB%8F%E6%96%B0%E9%97%BB/page/" + fmt.Sprintf("%d", pageIndex))
 	}

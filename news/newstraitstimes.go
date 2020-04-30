@@ -83,7 +83,7 @@ func CrawlNewStraitsTimes() bool {
 		}
 	})
 
-	for pageIndex := 0; pageIndex < 3; pageIndex++ {
+	for pageIndex := 0; pageIndex < 1; pageIndex++ {
 		// Add URLs to the queue
 		q.AddURL("https://www.nst.com.my/business?page=" + fmt.Sprintf("%d", pageIndex))
 	}

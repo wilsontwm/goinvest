@@ -102,7 +102,7 @@ func CrawlTheStar() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 1; pageIndex <= 3; pageIndex++ {
+	for pageIndex := 1; pageIndex <= 1; pageIndex++ {
 		// Add URLs to the queue
 		q.AddURL("https://www.thestar.com.my/news/latest?tag=Business&pgno=" + fmt.Sprintf("%d", pageIndex))
 	}

@@ -79,7 +79,7 @@ func CrawlBusinessInsider() bool {
 		CreateArticle(article)
 	})
 
-	for i := 1; i <= 3; i++ {
+	for i := 1; i <= 1; i++ {
 		newLinks := getLinksOnPage(i)
 		links = append(links, newLinks...)
 	}

@@ -65,15 +65,15 @@ func GetDB() *gorm.DB {
 func CreateArticle(input *Article) (*Article, error) {
 	article := input
 
-	// db := GetDB()
-	// defer db.Close()
+	db := GetDB()
+	defer db.Close()
 
-	// // Create the user
-	// db.Create(article)
+	// Create the user
+	db.Create(article)
 
-	// if article.ID <= 0 {
-	// 	return nil, fmt.Errorf("Article is not created.")
-	// }
+	if article.ID <= 0 {
+		return nil, fmt.Errorf("Article is not created.")
+	}
 
 	return article, nil
 }

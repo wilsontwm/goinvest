@@ -97,7 +97,7 @@ func CrawlSinChew() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 1; pageIndex <= 3; pageIndex++ {
+	for pageIndex := 1; pageIndex <= 1; pageIndex++ {
 		// Add URLs to the queue
 		page := ""
 		if pageIndex > 1 {

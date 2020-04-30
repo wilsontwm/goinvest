@@ -82,7 +82,7 @@ func CrawlChinaPress() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 1; pageIndex <= 3; pageIndex++ {
+	for pageIndex := 1; pageIndex <= 1; pageIndex++ {
 		// Add URLs to the queue
 		url := "https://www.chinapress.com.my/category/%e8%b4%a2%e7%bb%8f%e6%96%b0%e9%97%bb/page/" + fmt.Sprintf("%d", pageIndex)
 		q.AddURL(url)

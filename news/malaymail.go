@@ -98,7 +98,7 @@ func CrawlMalayMail() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 1; pageIndex <= 3; pageIndex++ {
+	for pageIndex := 1; pageIndex <= 1; pageIndex++ {
 		// Add URLs to the queue
 		q.AddURL("https://www.malaymail.com/news/money?page=" + fmt.Sprintf("%d", pageIndex))
 	}

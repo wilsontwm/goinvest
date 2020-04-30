@@ -99,7 +99,7 @@ func CrawlTheEdge() bool {
 		CreateArticle(article)
 	})
 
-	for pageIndex := 0; pageIndex < 3; pageIndex++ {
+	for pageIndex := 0; pageIndex < 1; pageIndex++ {
 		// Add URLs to the queue
 		q.AddURL("https://www.theedgemarkets.com/categories/malaysia?page=" + fmt.Sprintf("%d", pageIndex))
 	}
