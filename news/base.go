@@ -3,6 +3,7 @@ package news
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
 	"log"
@@ -23,9 +24,9 @@ const (
 )
 
 type Article struct {
-	ID          int `gorm:"primary_key;"`
-	Title       string
-	Content     string
+	ID          int    `gorm:"primary_key;"`
+	Title       string `sql:"type:longtext"`
+	Content     string `sql:"type:longtext"`
 	Source      int
 	URL         string
 	Thumbnail   string
@@ -34,7 +35,8 @@ type Article struct {
 }
 
 var db *gorm.DB // database
-var username, password, dbName, dbHost, dbPort string
+var dbURI string
+var dbDriver string
 
 func init() {
 	err := godotenv.Load()
@@ -42,18 +44,28 @@ func init() {
 		log.Print(err)
 	}
 
-	username = os.Getenv("DB_USER")
-	password = os.Getenv("DB_PASSWORD")
-	dbName = os.Getenv("DB_NAME")
-	dbHost = os.Getenv("DB_HOST")
-	dbPort = os.Getenv("DB_PORT")
+	dbDriver = os.Getenv("DB_DRIVER")
+	dbURI = os.Getenv("DB_URI_LOCAL")
+	if os.Getenv("IS_PRODUCTION") == "True" {
+		dbURI = os.Getenv("DB_URI_PRODUCTION")
+	}
+
+	migrateDatabase()
+}
+
+// Datebase migration
+func migrateDatabase() {
+	db := GetDB()
+
+	db.Debug().AutoMigrate(&Article{})
+
+	// Migration scripts
+	//db.Model(&Attendee{}).AddForeignKey("parent_id", "attendees(id)", "SET NULL", "RESTRICT")
 }
 
 func GetDB() *gorm.DB {
-	dbUri := fmt.Sprintf("postgres://%v@%v:%v/%v?sslmode=disable&password=%v", username, dbHost, dbPort, dbName, password)
-
 	// Making connection to the database
-	db, err := gorm.Open("postgres", dbUri)
+	db, err := gorm.Open(dbDriver, dbURI)
 	if err != nil {
 		log.Println(err)
 	}
