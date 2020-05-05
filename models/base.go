@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -60,6 +61,22 @@ func GetDB() *gorm.DB {
 	db, err := gorm.Open(dbDriver, dbURI)
 	if err != nil {
 		log.Println(err)
+	}
+
+	retryCount := 30
+	for {
+		err := db.DB().Ping()
+		if err != nil {
+			if retryCount == 0 {
+				log.Fatalf("Not able to establish connection to database")
+			}
+
+			log.Printf(fmt.Sprintf("Could not connect to database. Wait 2 seconds. %d retries left...", retryCount))
+			retryCount--
+			time.Sleep(2 * time.Second)
+		} else {
+			break
+		}
 	}
 
 	return db

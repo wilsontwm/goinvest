@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - goinvest-volume:/var/lib/mysql
+    ports:
+      - 3306:3306
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    depends_on:
+      - mysql
+    ports:
+      - 8080:8080
+  backend:
+    image: goinvest:0.1
+    depends_on:
+      - mysql
+    environment:
+      WAIT_HOSTS: mysql:3306
+    ports:
+      - 3000:3000
+volumes:
+  goinvest-volume:

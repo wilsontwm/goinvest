@@ -70,6 +70,22 @@ func GetDB() *gorm.DB {
 		log.Println(err)
 	}
 
+	retryCount := 30
+	for {
+		err := db.DB().Ping()
+		if err != nil {
+			if retryCount == 0 {
+				log.Fatalf("Not able to establish connection to database")
+			}
+
+			log.Printf(fmt.Sprintf("Could not connect to database. Wait 2 seconds. %d retries left...", retryCount))
+			retryCount--
+			time.Sleep(2 * time.Second)
+		} else {
+			break
+		}
+	}
+
 	return db
 }
 
