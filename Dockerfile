@@ -1,14 +1,17 @@
 # Start from base image
 FROM golang:alpine
 
-# Create an /go/src/
-RUN mkdir /goinvest
+# Set the current working directory inside the container
+WORKDIR /backend
 
-# Copy everything in root directory to /goinvest directory
-ADD . /goinvest
+# Copy go mod and sum files
+COPY go.mod go.sum ./
 
-# Specify that subsequent commands to be executed in /goinvest directory
-WORKDIR /goinvest
+# Download all dependencies
+RUN go mod download
+
+# Copy source from current directory to working directory
+COPY . .
 
 # Build the application
 RUN go build -o main .
@@ -17,4 +20,4 @@ RUN go build -o main .
 EXPOSE 3000
 
 # Run the created binary executable after wait for mysql container to be up
-CMD ["./wait-for.sh" , "mysql:3306" , "--timeout=300" , "--" , "/goinvest/main"]
+CMD ["./wait-for.sh" , "mysql:3306" , "--timeout=300" , "--" , "./main"]
