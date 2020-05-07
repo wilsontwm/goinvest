@@ -28,5 +28,12 @@ services:
       WAIT_HOSTS: mysql:3306
     ports:
       - 3000:3000
+  frontend:
+    image: vueinvest:0.1
+    depends_on:
+      - backend
+    ports:
+      - 80:80
+
 volumes:
   goinvest-volume:
