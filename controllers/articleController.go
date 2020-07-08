@@ -10,11 +10,12 @@ import (
 	"time"
 )
 
+// ArticleCrawlInput : The input for the articles
 type ArticleCrawlInput struct {
 	Sources []int
 }
 
-// GET: List of articles
+// ArticleList (GET) : List of articles
 var ArticleList = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 
@@ -68,7 +69,7 @@ var ArticleList = func(w http.ResponseWriter, r *http.Request) {
 	utils.Success(w, http.StatusOK, resp, articles, "")
 }
 
-// POST: Crawl articles from various sources
+// ArticleCrawl (POST) : Crawl articles from various sources
 var ArticleCrawl = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 

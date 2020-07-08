@@ -3,11 +3,11 @@ package models
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/mysql"    // To install dependencies first
+	_ "github.com/jinzhu/gorm/dialects/postgres" // To install dependencies first
 	"github.com/joho/godotenv"
 	"github.com/satori/go.uuid"
-	_ "goinvest/news"
+	_ "goinvest/news" // To install dependencies first
 	"log"
 	"os"
 	"time"
@@ -16,10 +16,11 @@ import (
 var db *gorm.DB // database
 var dbURI string
 var dbDriver string
+var jwtKey string
 
 // Base contains common columns for all tables.
 type Base struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key;"`
+	ID        uuid.UUID `gorm:"type:varchar(255);primary_key;"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`
@@ -42,6 +43,7 @@ func init() {
 	if os.Getenv("IS_PRODUCTION") == "True" {
 		dbURI = os.Getenv("DB_URI_PRODUCTION")
 	}
+	jwtKey = os.Getenv("JWT_KEY")
 
 	migrateDatabase()
 }
@@ -50,12 +52,13 @@ func init() {
 func migrateDatabase() {
 	db := GetDB()
 
-	db.Debug().AutoMigrate()
+	db.Debug().AutoMigrate(&User{})
 
 	// Migration scripts
 	//db.Model(&Attendee{}).AddForeignKey("parent_id", "attendees(id)", "SET NULL", "RESTRICT")
 }
 
+// GetDB : To get the DB instance
 func GetDB() *gorm.DB {
 	// Making connection to the database
 	db, err := gorm.Open(dbDriver, dbURI)

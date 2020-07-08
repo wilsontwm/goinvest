@@ -10,14 +10,14 @@ import (
 	"os"
 )
 
-type Route struct {
+type route struct {
 	Router *mux.Router
 	Path   string
 	Func   func(http.ResponseWriter, *http.Request)
 	Method string
 }
 
-var routes []Route
+var routes []route
 
 func main() {
 	err := godotenv.Load()
@@ -45,8 +45,9 @@ func main() {
 // Setup REST routes
 func setupRoutes(router *mux.Router) {
 	apiRoutes := router.PathPrefix("/api").Subrouter()
-	routes = append(routes, Route{Router: apiRoutes, Path: "/articles", Func: controllers.ArticleList, Method: "GET"})
-	routes = append(routes, Route{Router: apiRoutes, Path: "/articles/crawl", Func: controllers.ArticleCrawl, Method: "POST"})
+	routes = append(routes, route{Router: apiRoutes, Path: "/articles", Func: controllers.ArticleList, Method: "GET"})
+	routes = append(routes, route{Router: apiRoutes, Path: "/articles/crawl", Func: controllers.ArticleCrawl, Method: "POST"})
+	routes = append(routes, route{Router: apiRoutes, Path: "/login", Func: controllers.UserLogin, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/login", Func: controllers.Login, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/signup", Func: controllers.Signup, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/activateaccount", Func: controllers.ActivateAccount, Method: "POST"})

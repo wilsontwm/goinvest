@@ -7,17 +7,27 @@ import (
 )
 
 const (
-	ChinaPress      = 1
-	NanYang         = 2
-	SinChew         = 3
-	TheStar         = 4
-	TheEdge         = 5
-	Investing       = 6
+	// ChinaPress ID
+	ChinaPress = 1
+	// NanYang ID
+	NanYang = 2
+	// SinChew ID
+	SinChew = 3
+	// TheStar ID
+	TheStar = 4
+	// TheEdge ID
+	TheEdge = 5
+	// Investing ID
+	Investing = 6
+	// NewStraitsTimes ID
 	NewStraitsTimes = 7
-	MalayMail       = 8
+	// MalayMail ID
+	MalayMail = 8
+	// BusinessInsider ID
 	BusinessInsider = 9
 )
 
+// Article : The news article
 type Article struct {
 	ID          int `gorm:"primary_key;"`
 	Title       string
@@ -29,6 +39,7 @@ type Article struct {
 	CreatedAt   time.Time
 }
 
+// ArticleListFilter : The filter used for article list
 type ArticleListFilter struct {
 	NewSources        []int
 	Limit             int
@@ -36,6 +47,7 @@ type ArticleListFilter struct {
 	PreviousPublished time.Time
 }
 
+// NewsSources : All the news sources in Malaysia
 var NewsSources map[int]string
 
 func init() {
@@ -52,7 +64,7 @@ func init() {
 	}
 }
 
-// Get list of articles
+// GetArticleList : Get list of articles
 func GetArticleList(filter ArticleListFilter) ([]Article, error) {
 	var articles []Article
 
@@ -91,7 +103,7 @@ func filterByNewSources(sourceID []int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-// Crawl the articles based on the news sources
+// CrawlArticles : Crawl the articles based on the news sources
 func CrawlArticles(sourceIDs []int) bool {
 	var filterSources []int
 	for _, v := range sourceIDs {
