@@ -66,9 +66,8 @@ func UserLogin(user *User) error {
 	if temp.ID == uuid.Nil {
 		db.Create(user)
 	} else if temp.ID != uuid.Nil {
-		db.Model(user).Updates(map[string]interface{}{
+		db.Model(user).Where("email = ?", user.Email).Updates(map[string]interface{}{
 			"name":     user.Name,
-			"email":    user.Email,
 			"pic_url":  user.PicURL,
 			"login_at": user.LoginAt,
 		})
