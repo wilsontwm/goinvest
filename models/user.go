@@ -20,6 +20,8 @@ type Token struct {
 	jwt.StandardClaims
 }
 
+type contextKey string
+
 // User : Users that have registered an account on the platform
 type User struct {
 	Base
@@ -29,9 +31,19 @@ type User struct {
 	PicURL        string
 	FirebaseID    string
 	LoginAt       time.Time
-	FirebaseToken string `gorm:"-"`
-	Token         string `gorm:"-"`
+	FirebaseToken string    `gorm:"-"`
+	Token         string    `gorm:"-"`
+	Accounts      []Account `gorm:"foreignkey:UserID"`
 }
+
+func (c contextKey) String() string {
+	return string(c)
+}
+
+var (
+	// ContextKeyUserID var
+	ContextKeyUserID = contextKey("UserID")
+)
 
 // UserLogin : Login the user, update the user profile accordingly (if necessary)
 func UserLogin(user *User) error {
@@ -64,13 +76,14 @@ func UserLogin(user *User) error {
 	// 2. Login the user if email and firebase token is valid
 	// 3. Return an error
 	if temp.ID == uuid.Nil {
-		db.Create(user)
+		db.Save(user)
 	} else if temp.ID != uuid.Nil {
 		db.Model(user).Where("email = ?", user.Email).Updates(map[string]interface{}{
 			"name":     user.Name,
 			"pic_url":  user.PicURL,
 			"login_at": user.LoginAt,
 		})
+		user.ID = temp.ID
 	}
 
 	// Create a new JWT token for the newly login account
@@ -87,4 +100,26 @@ func UserLogin(user *User) error {
 	user.Token = tokenString
 
 	return nil
+}
+
+// UserAuthenticate : Authenticate the user by token
+func UserAuthenticate(jwtToken string) (*Token, error) {
+	tk := &Token{}
+	token, err := jwt.ParseWithClaims(jwtToken, tk, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtKey), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("token is not valid")
+	}
+
+	if time.Now().After(tk.Expiry) {
+		return nil, fmt.Errorf("token has expired")
+	}
+
+	return tk, nil
 }

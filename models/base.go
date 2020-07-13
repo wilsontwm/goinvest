@@ -52,7 +52,9 @@ func init() {
 func migrateDatabase() {
 	db := GetDB()
 
-	db.Debug().AutoMigrate(&User{})
+	db.Debug().AutoMigrate(
+		&User{}, &Account{},
+	)
 
 	// Migration scripts
 	//db.Model(&Attendee{}).AddForeignKey("parent_id", "attendees(id)", "SET NULL", "RESTRICT")

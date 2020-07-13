@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"goinvest/controllers"
+	"goinvest/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -48,6 +49,16 @@ func setupRoutes(router *mux.Router) {
 	routes = append(routes, route{Router: apiRoutes, Path: "/articles", Func: controllers.ArticleList, Method: "GET"})
 	routes = append(routes, route{Router: apiRoutes, Path: "/articles/crawl", Func: controllers.ArticleCrawl, Method: "POST"})
 	routes = append(routes, route{Router: apiRoutes, Path: "/login", Func: controllers.UserLogin, Method: "POST"})
+
+	apiAuthenticatedRoutes := apiRoutes.PathPrefix("/auth").Subrouter()
+	apiAuthenticatedRoutes.Use(middleware.JwtAuthentication())
+
+	// Account routes
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/list", Func: controllers.AccountList, Method: "GET"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/create", Func: controllers.AccountCreate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/update", Func: controllers.AccountUpdate, Method: "PATCH"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/delete", Func: controllers.AccountDelete, Method: "DELETE"})
+
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/login", Func: controllers.Login, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/signup", Func: controllers.Signup, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/activateaccount", Func: controllers.ActivateAccount, Method: "POST"})
