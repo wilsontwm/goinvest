@@ -56,8 +56,8 @@ func setupRoutes(router *mux.Router) {
 	// Account routes
 	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/list", Func: controllers.AccountList, Method: "GET"})
 	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/create", Func: controllers.AccountCreate, Method: "POST"})
-	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/update", Func: controllers.AccountUpdate, Method: "PATCH"})
-	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/delete", Func: controllers.AccountDelete, Method: "DELETE"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/update", Func: controllers.AccountUpdate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/delete", Func: controllers.AccountDelete, Method: "POST"})
 
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/login", Func: controllers.Login, Method: "POST"})
 	// routes = append(routes, Route{Router: apiRoutes, Path: "/signup", Func: controllers.Signup, Method: "POST"})
