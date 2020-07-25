@@ -1,7 +1,7 @@
 package models
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/satori/go.uuid"
 	"time"
@@ -15,6 +15,7 @@ type FundFlow struct {
 	Amount        float64
 	Remark        string
 	AccountID     uuid.UUID `gorm:"type:varchar(255);"`
+	Operation     string    `gorm:"-"`
 }
 
 // FundFlowListFilter : The filter used for fund flow list
@@ -57,6 +58,10 @@ func FundFlowList(filter FundFlowListFilter) ([]FundFlow, error) {
 		Offset((filter.Page - 1) * filter.Limit).
 		Limit(filter.Limit).
 		Find(&fundFlows)
+
+	for i := range fundFlows {
+		fundFlows[i].Operation = fmt.Sprintf("%v", OperationType(fundFlows[i].OperationType))
+	}
 
 	return fundFlows, nil
 }
