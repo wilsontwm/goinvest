@@ -53,7 +53,7 @@ func migrateDatabase() {
 	db := GetDB()
 
 	db.Debug().AutoMigrate(
-		&User{}, &Account{},
+		&User{}, &Account{}, &FundFlow{},
 	)
 
 	// Migration scripts
