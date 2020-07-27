@@ -59,16 +59,12 @@ func setupRoutes(router *mux.Router) {
 	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/update", Func: controllers.AccountUpdate, Method: "POST"})
 	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/account/delete", Func: controllers.AccountDelete, Method: "POST"})
 
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/login", Func: controllers.Login, Method: "POST"})
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/signup", Func: controllers.Signup, Method: "POST"})
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/activateaccount", Func: controllers.ActivateAccount, Method: "POST"})
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/forgetpassword", Func: controllers.ForgetPassword, Method: "POST"})
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/resetpassword", Func: controllers.ResetPassword, Method: "POST"})
-	// routes = append(routes, Route{Router: apiRoutes, Path: "/getactivation", Func: controllers.GetActivation, Method: "POST"})
+	// Fund flow routes
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/list", Func: controllers.FundFlowList, Method: "GET"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/create", Func: controllers.FundFlowCreate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/update", Func: controllers.FundFlowUpdate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/delete", Func: controllers.FundFlowDelete, Method: "POST"})
 
-	// apiAuthenticatedRoutes := apiRoutes.PathPrefix("/home").Subrouter()
-	// apiAuthenticatedRoutes.Use(middleware.JwtAuthentication())
-	// routes = append(routes, Route{Router: apiAuthenticatedRoutes, Path: "", Func: controllers.Home, Method: "GET"})
 	for _, r := range routes {
 		r.Router.HandleFunc(r.Path, r.Func).Methods(r.Method)
 	}

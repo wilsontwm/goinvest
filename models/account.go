@@ -23,6 +23,17 @@ func AccountList(userID string) ([]Account, error) {
 	return accounts, nil
 }
 
+// AccountGet : Get all the accounts that belong to the user
+func AccountGet(userID, accountID uuid.UUID) (Account, error) {
+	db := GetDB()
+	defer db.Close()
+
+	account := Account{}
+	db.Table("accounts").Where("user_id = ? and id = ?", userID, accountID).First(&account)
+
+	return account, nil
+}
+
 // AccountCreate : Create a new account for the user
 func AccountCreate(account *Account) error {
 	db := GetDB()
