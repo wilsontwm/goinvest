@@ -61,9 +61,9 @@ func setupRoutes(router *mux.Router) {
 
 	// Fund flow routes
 	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/list", Func: controllers.FundFlowList, Method: "GET"})
-	// routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/create", Func: controllers.AccountCreate, Method: "POST"})
-	// routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/update", Func: controllers.AccountUpdate, Method: "POST"})
-	// routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/delete", Func: controllers.AccountDelete, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/create", Func: controllers.FundFlowCreate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/update", Func: controllers.FundFlowUpdate, Method: "POST"})
+	routes = append(routes, route{Router: apiAuthenticatedRoutes, Path: "/fundflow/delete", Func: controllers.FundFlowDelete, Method: "POST"})
 
 	for _, r := range routes {
 		r.Router.HandleFunc(r.Path, r.Func).Methods(r.Method)

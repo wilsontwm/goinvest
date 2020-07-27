@@ -10,11 +10,11 @@ import (
 // FundFlow : The fund flow that records all the money transaction that the user has performed
 type FundFlow struct {
 	Base
-	Date          time.Time
-	OperationType OperationType
-	Amount        float64
+	Date          time.Time     `validate:"required"`
+	OperationType OperationType `validate:"required,numeric,gte=1,lte=4"`
+	Amount        float64       `validate:"required,number"`
 	Remark        string
-	AccountID     uuid.UUID `gorm:"type:varchar(255);"`
+	AccountID     uuid.UUID `gorm:"type:varchar(255);" validate:"required"`
 	Operation     string    `gorm:"-"`
 }
 
@@ -41,7 +41,7 @@ const (
 )
 
 func (ot OperationType) String() string {
-	return [...]string{"Deposit", "Withdrawal", "Stocks Purchase", "Stocks Sales"}[ot]
+	return [...]string{"", "Deposit", "Withdrawal", "Stocks Purchase", "Stocks Sales"}[ot]
 }
 
 // FundFlowList : Get all the money transactions that belong to the user
@@ -84,53 +84,76 @@ func filterByAccountIDs(accountIDs []uuid.UUID) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-/*
-// AccountCreate : Create a new account for the user
-func AccountCreate(account *Account) error {
+// FundFlowCreate : Create a new fund flow transaction for the user account
+func FundFlowCreate(fundFlow *FundFlow) error {
+	// Validate input first
+	err := validate.Struct(fundFlow)
+
+	if err != nil {
+		if err = getValidationMessage(err); err != nil {
+			return err
+		}
+	}
+
 	db := GetDB()
 	defer db.Close()
 
-	db.Save(account)
+	db.Save(fundFlow)
 
-	if account.ID == uuid.Nil {
-		return fmt.Errorf("account is not saved")
+	if fundFlow.ID == uuid.Nil {
+		return fmt.Errorf("fund flow is not saved")
 	}
+
+	fundFlow.Operation = fmt.Sprintf("%v", OperationType(fundFlow.OperationType))
 
 	return nil
 }
 
-// AccountUpdate : Update an existing account
-func AccountUpdate(account *Account) error {
+// FundFlowUpdate : Update an existing fund flow
+func FundFlowUpdate(fundFlow *FundFlow) error {
+	// Validate input first
+	err := validate.Struct(fundFlow)
+
+	if err != nil {
+		if err = getValidationMessage(err); err != nil {
+			return err
+		}
+	}
+
 	db := GetDB()
 	defer db.Close()
 
-	temp := Account{}
-	db.Table("accounts").Where("id = ? and user_id = ?", account.ID, account.UserID).First(&temp)
+	temp := FundFlow{}
+	db.Table("fund_flows").Where("id = ?", fundFlow.ID).First(&temp)
 
 	if temp.ID == uuid.Nil {
-		return fmt.Errorf("account not found")
+		return fmt.Errorf("fund flow not found")
 	}
 
-	temp.Title = account.Title
+	temp.Date = fundFlow.Date
+	temp.OperationType = fundFlow.OperationType
+	temp.Amount = fundFlow.Amount
+	temp.Remark = fundFlow.Remark
 	db.Save(&temp)
 
+	fundFlow.Operation = fmt.Sprintf("%v", OperationType(temp.OperationType))
+
 	return nil
 }
 
-// AccountDelete : Delete an existing account
-func AccountDelete(account *Account) error {
+// FundFlowDelete : Delete an existing fund flow
+func FundFlowDelete(fundFlow *FundFlow) error {
 	db := GetDB()
 	defer db.Close()
 
-	temp := Account{}
-	db.Table("accounts").Where("id = ? and user_id = ?", account.ID, account.UserID).First(&temp)
+	temp := FundFlow{}
+	db.Table("fund_flows").Where("id = ?", fundFlow.ID).First(&temp)
 
 	if temp.ID == uuid.Nil {
-		return fmt.Errorf("account not found")
+		return fmt.Errorf("fund flow not found")
 	}
 
 	db.Delete(&temp)
 
 	return nil
 }
-*/

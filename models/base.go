@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"    // To install dependencies first
 	_ "github.com/jinzhu/gorm/dialects/postgres" // To install dependencies first
@@ -10,6 +11,7 @@ import (
 	_ "goinvest/news" // To install dependencies first
 	"log"
 	"os"
+	"reflect"
 	"time"
 )
 
@@ -17,6 +19,9 @@ var db *gorm.DB // database
 var dbURI string
 var dbDriver string
 var jwtKey string
+
+// use a single instance of Validate, it caches struct info
+var validate *validator.Validate
 
 // Base contains common columns for all tables.
 type Base struct {
@@ -46,6 +51,8 @@ func init() {
 	jwtKey = os.Getenv("JWT_KEY")
 
 	migrateDatabase()
+
+	validate = validator.New()
 }
 
 // Datebase migration
@@ -85,4 +92,34 @@ func GetDB() *gorm.DB {
 	}
 
 	return db
+}
+
+// Get the validation message
+func getValidationMessage(err error) error {
+
+	for _, errz := range err.(validator.ValidationErrors) {
+		// Build the custom errors here
+		switch tag := errz.ActualTag(); tag {
+		case "required":
+			return fmt.Errorf(errz.StructField() + " is required.")
+		case "email":
+			return fmt.Errorf(errz.StructField() + " is an invalid email address.")
+		case "min":
+			if errz.Type().Kind() == reflect.String {
+				return fmt.Errorf(errz.StructField() + " must be more than or equal to " + errz.Param() + " character(s).")
+			}
+			return fmt.Errorf(errz.StructField() + " must be larger than " + errz.Param() + ".")
+
+		case "max":
+			if errz.Type().Kind() == reflect.String {
+				return fmt.Errorf(errz.StructField() + " must be lesser than or equal to " + errz.Param() + " character(s).")
+			}
+			return fmt.Errorf(errz.StructField() + " must be smaller than " + errz.Param() + ".")
+
+		default:
+			return fmt.Errorf(errz.StructField() + " is invalid.")
+		}
+	}
+
+	return nil
 }

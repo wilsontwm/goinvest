@@ -8,6 +8,7 @@ require (
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.2.4 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-playground/validator/v10 v10.3.0
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/gorilla/handlers v1.4.2

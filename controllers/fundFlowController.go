@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"github.com/satori/go.uuid"
 	"goinvest/models"
 	"goinvest/utils"
@@ -48,7 +48,7 @@ var FundFlowList = func(w http.ResponseWriter, r *http.Request) {
 	funds, err := models.FundFlowList(filter)
 
 	if err != nil {
-		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
 		return
 	}
 
@@ -56,74 +56,88 @@ var FundFlowList = func(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-// AccountCreate (Post): Create a new account
-var AccountCreate = func(w http.ResponseWriter, r *http.Request) {
+// FundFlowCreate (Post): Create a new fund flow transaction
+var FundFlowCreate = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	userID := r.Context().Value(models.ContextKeyUserID).(uuid.UUID)
 
-	account := &models.Account{}
-	err := json.NewDecoder(r.Body).Decode(account)
+	fundFlow := &models.FundFlow{}
+	err := json.NewDecoder(r.Body).Decode(fundFlow)
 
 	if err != nil {
 		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
 		return
 	}
 
-	account.UserID = userID
+	// Check if the account belongs to the user
+	account, _ := models.AccountGet(userID, fundFlow.AccountID)
 
-	if err = models.AccountCreate(account); err != nil {
-		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
+	if account.ID == uuid.Nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, "Invalid account ID.")
 		return
 	}
 
-	utils.Success(w, http.StatusOK, resp, &account, "You have successfully created a new account.")
+	if err = models.FundFlowCreate(fundFlow); err != nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
+		return
+	}
+
+	utils.Success(w, http.StatusOK, resp, fundFlow, "You have successfully created a new fund flow transaction.")
 }
 
-// AccountUpdate (Patch): Update an existing account
-var AccountUpdate = func(w http.ResponseWriter, r *http.Request) {
+// FundFlowUpdate (Post): Update an existing fund flow transaction
+var FundFlowUpdate = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	userID := r.Context().Value(models.ContextKeyUserID).(uuid.UUID)
 
-	account := &models.Account{}
-	err := json.NewDecoder(r.Body).Decode(account)
+	fundFlow := &models.FundFlow{}
+	err := json.NewDecoder(r.Body).Decode(fundFlow)
 
 	if err != nil {
 		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
 		return
 	}
 
-	account.UserID = userID
-
-	if err = models.AccountUpdate(account); err != nil {
-		utils.Fail(w, http.StatusNotFound, resp, err.Error())
+	// Check if the account belongs to the user
+	account, _ := models.AccountGet(userID, fundFlow.AccountID)
+	if account.ID == uuid.Nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, "Invalid account ID.")
 		return
 	}
 
-	utils.Success(w, http.StatusOK, resp, &account, "You have successfully updated an existing account.")
+	if err = models.FundFlowUpdate(fundFlow); err != nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
+		return
+	}
+
+	utils.Success(w, http.StatusOK, resp, fundFlow, "You have successfully updated an existing fund flow transaction.")
 }
 
-// AccountDelete (Delete): Delete an existing account
-var AccountDelete = func(w http.ResponseWriter, r *http.Request) {
+// FundFlowDelete (Post): Delete an existing fund flow transaction
+var FundFlowDelete = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	data := make(map[string]interface{})
 	userID := r.Context().Value(models.ContextKeyUserID).(uuid.UUID)
 
-	account := &models.Account{}
-	err := json.NewDecoder(r.Body).Decode(account)
+	fundFlow := &models.FundFlow{}
+	err := json.NewDecoder(r.Body).Decode(fundFlow)
 
 	if err != nil {
 		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
 		return
 	}
 
-	account.UserID = userID
-
-	if err = models.AccountDelete(account); err != nil {
-		utils.Fail(w, http.StatusNotFound, resp, err.Error())
+	// Check if the account belongs to the user
+	account, _ := models.AccountGet(userID, fundFlow.AccountID)
+	if account.ID == uuid.Nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, "Invalid account ID.")
 		return
 	}
 
-	utils.Success(w, http.StatusOK, resp, data, "You have successfully deleted an existing account.")
+	if err = models.FundFlowDelete(fundFlow); err != nil {
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
+		return
+	}
+
+	utils.Success(w, http.StatusOK, resp, data, "You have successfully deleted an existing fund flow transaction.")
 }
-*/

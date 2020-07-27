@@ -17,7 +17,7 @@ var AccountList = func(w http.ResponseWriter, r *http.Request) {
 	accounts, err := models.AccountList(userID.String())
 
 	if err != nil {
-		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
 		return
 	}
 
@@ -41,14 +41,14 @@ var AccountCreate = func(w http.ResponseWriter, r *http.Request) {
 	account.UserID = userID
 
 	if err = models.AccountCreate(account); err != nil {
-		utils.Fail(w, http.StatusInternalServerError, resp, err.Error())
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
 		return
 	}
 
 	utils.Success(w, http.StatusOK, resp, &account, "You have successfully created a new account.")
 }
 
-// AccountUpdate (Patch): Update an existing account
+// AccountUpdate (Post): Update an existing account
 var AccountUpdate = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	userID := r.Context().Value(models.ContextKeyUserID).(uuid.UUID)
@@ -64,14 +64,14 @@ var AccountUpdate = func(w http.ResponseWriter, r *http.Request) {
 	account.UserID = userID
 
 	if err = models.AccountUpdate(account); err != nil {
-		utils.Fail(w, http.StatusNotFound, resp, err.Error())
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
 		return
 	}
 
 	utils.Success(w, http.StatusOK, resp, &account, "You have successfully updated an existing account.")
 }
 
-// AccountDelete (Delete): Delete an existing account
+// AccountDelete (Post): Delete an existing account
 var AccountDelete = func(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	data := make(map[string]interface{})
@@ -88,7 +88,7 @@ var AccountDelete = func(w http.ResponseWriter, r *http.Request) {
 	account.UserID = userID
 
 	if err = models.AccountDelete(account); err != nil {
-		utils.Fail(w, http.StatusNotFound, resp, err.Error())
+		utils.Fail(w, http.StatusUnprocessableEntity, resp, err.Error())
 		return
 	}
 
